@@ -1,0 +1,41 @@
+services:
+  www:
+    build: .
+    container_name: php_web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: pass
+      DB_NAME: alumnos
+      DB_PORT: 3306  
+
+  db:
+    image: mariadb:latest
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: alumnos
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:      
+      - ./database:/docker-entrypoint-initdb.d
+      - ./mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_USER: alumnos
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: pass
